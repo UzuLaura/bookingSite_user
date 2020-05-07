@@ -23,11 +23,13 @@
             <h3 class="subtitle is-3 has-text-centered has-background-dark has-text-light padding">Pick date for your visit</h3>
             <div class="columns">
                 <div class="column is-6">
+                    <!--:min-date='new Date()'-->
                     <date-picker
                             mode="range"
-                            :min-date='new Date()'
+                            :disabled-dates='property.unavailableDays'
                             v-model='date'
                             color="green"
+                            :firstDayOfWeek="2"
                             is-inline
                             is-expanded
                     />
@@ -81,6 +83,10 @@
                     start: '',
                     end: ''
                 },
+                convertedDate: {
+                    start: '',
+                    end: ''
+                },
                 totalDays: 0,
                 totalPrice: 0,
                 notification: {
@@ -97,7 +103,7 @@
                     extraImages: [],
                     price: '',
                     city: '',
-                    unavailableDays: ''
+                    unavailableDays: [{start: null,  end: new Date()}]
                 },
                 bookingInfo: [],
                 imageIndex: 0,
@@ -105,11 +111,11 @@
         },
         computed: {
             startDate: function () {
-                const startDate = new Date(this.date.start).toLocaleDateString()
+                const startDate = new Date(this.date.start).toLocaleDateString('lt')
                 return startDate
             },
             endDate: function () {
-                const endDate = new Date(this.date.end).toLocaleDateString()
+                const endDate = new Date(this.date.end).toLocaleDateString('lt')
                 return endDate
             }
         },
@@ -122,20 +128,34 @@
                 this.totalDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
 
                 if (this.totalDays === 0) {
+                    if (this.date.start) {
+                        this.totalDays = 1
+                    }
                     this.totalPrice = this.property.price
                 } else {
                     this.totalPrice = this.property.price * this.totalDays
                 }
+            },
+            convertBookingInfoDays () {
+                this.convertedDate.start = new Date(this.date.start)
+                this.convertedDate.start.setHours(this.convertedDate.start.getHours() + 3)
+
+                this.convertedDate.end = new Date(this.date.end)
+                this.convertedDate.end.setHours(this.convertedDate.end.getHours() + 3)
             },
             proceedPayment () {
                 this.bookingInfo = {
                     totalPrice: this.totalPrice,
                     totalDays: this.totalDays,
                     property: this.property.id,
-                    bookedDays: this.date
+                    bookedDays: this.convertedDate
                 }
-                localStorage.setItem('bookingInfo', JSON.stringify(this.bookingInfo))
-                this.$router.replace({ name: "Pay" })
+                if (this.date.start) {
+                    localStorage.setItem('bookingInfo', JSON.stringify(this.bookingInfo))
+                    this.$router.replace({ name: "Pay" })
+                } else {
+                    alert('Pick date for you visit to proceed to payment!')
+                }
             },
             carouselForward () {
                 if (this.imageIndex < this.property.extraImages.length - 1) {
@@ -155,6 +175,7 @@
         watch: {
             date: function () {
                 this.calculatePrice()
+                this.convertBookingInfoDays ()
             }
         },
         beforeMount () {
@@ -174,14 +195,25 @@
                         this.property.extraImages = JSON.parse(property.data().extraImg)
                         this.property.price = property.data().price
                         this.property.city = property.data().city
+
+                        if (property.data().unavailableDays) {
+                            if (JSON.parse(property.data().unavailableDays).length >= 1) {
+                                JSON.parse(property.data().unavailableDays).forEach(day => {
+                                    this.property.unavailableDays.push(day)
+                                })
+                            } else {
+                                this.property.unavailableDays.push(JSON.parse(property.data().unavailableDays))
+                            }
+                        }
+
                         this.property.extraImages.push(this.property.image)
                     })
                     .then(() => {
                         this.loading = 'is-hidden'
                     })
-                // .then(() => {
-                //     this.imageIndex = setInterval(() => this.carouselForward(), 3000)
-                // })
+                    .then(() => {
+                        setInterval(() => this.carouselForward(), 3000)
+                    })
             }
         },
     }

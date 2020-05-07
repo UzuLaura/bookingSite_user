@@ -6,6 +6,8 @@ import Calendar from 'v-calendar/lib/components/calendar.umd'
 import DatePicker from 'v-calendar/lib/components/date-picker.umd'
 import * as firebase from "firebase";
 import 'firebase/firestore';
+import './../node_modules/@fortawesome/fontawesome-free/css/all.css'
+import './../node_modules/@fortawesome/fontawesome-free/js/all.js'
 
 const firebaseConfig = {
     apiKey: "AIzaSyBdKqeSD419Fw92F3J_uxL6VhyKDjsxwiA",

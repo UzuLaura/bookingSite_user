@@ -2,22 +2,41 @@
   <div class="home">
     <Spinner v-bind:class="loading"/>
     <div class="container section">
-        <!--FILTER-->
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Filter by City</label>
+        <div class="columns">
+            <!--SEARCH-->
+            <div class="column is-2">
+                <div class="field-label is-normal">
+                    <label class="label">Search by Name</label>
+                </div>
             </div>
-            <div class="select margin-bottom">
-                <select v-model="filter">
-                    <option>Vilnius</option>
-                    <option>Kaunas</option>
-                    <option>Klaipėda</option>
-                    <option>All</option>
-                </select>
+            <div class="column is-7">
+                <div class="control has-icons-left">
+                    <input class="input" v-model="search" type="text" placeholder="Search">
+                    <span class="icon is-left">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                    </span>
+                </div>
+            </div>
+            <!--FILTER-->
+            <div class="column is-3">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Filter by City</label>
+                    </div>
+                    <div class="select margin-bottom">
+                        <select v-model="filter">
+                            <option>Vilnius</option>
+                            <option>Kaunas</option>
+                            <option>Klaipėda</option>
+                            <option>All</option>
+                        </select>
+                    </div>
+                </div>
             </div>
         </div>
         <!--CARD-->
         <div class="columns is-multiline">
+            <div class="column is-12" v-bind:class="noResults"><h4 class="title has-text-centered">No Search Results Found</h4></div>
             <div class="card column is-4 hover" v-on:click="viewProperty(property.id)" v-for="property in properties" :key="property.title">
                 <div class="card-image">
                     <figure class="image is-4by3">
@@ -34,7 +53,7 @@
                     <div class="content">
                         {{ cutText(property.description) }}
                         <hr>
-                        <div class="level">
+                        <div class="level is-mobile">
                             <span class="tag is-success is-large level-left">Price: {{ property.price }}$</span>
                             <button class="button is-dark level-right" v-on:click="viewProperty(property.id)">View</button>
                         </div>
@@ -42,7 +61,6 @@
                 </div>
             </div>
         </div>
-
     </div>
   </div>
 </template>
@@ -59,8 +77,10 @@
             return {
                 properties: [],
                 user: localStorage.getItem('user'),
+                search: '',
                 filter: '',
-                loading: ''
+                loading: '',
+                noResults: 'is-hidden'
             }
         },
         methods: {
@@ -77,7 +97,40 @@
             }
         },
         watch: {
+            properties: function () {
+                if (this.properties.length < 1) {
+                    this.noResults = ''
+                } else {
+                    this.noResults = 'is-hidden'
+                }
+            },
+            search: function () {
+                firebase
+                    .firestore()
+                    .collection('properties')
+                    .orderBy("createdAt")
+                    .get()
+                    .then(data => {
+                        this.properties = []
+                        data.forEach(property => {
+                            if (property.data().name.toLowerCase().includes(this.search.toLowerCase())) {
+                                this.properties.push({
+                                    id: property.id,
+                                    name: property.data().name,
+                                    image: property.data().image,
+                                    price: property.data().price,
+                                    description: property.data().description,
+                                    city: property.data().city,
+                                    owner: property.data().ownerName,
+                                    createdAt: property.data().createdAt
+                                })
+                            }
+                        })
+                    })
+
+            },
             filter: function () {
+                this.loading = ''
                 this.properties = []
                 if (this.filter === 'All') {
                     firebase
@@ -99,6 +152,9 @@
                                 })
                             })
                         })
+                        .then(() => {
+                            this.loading = 'is-hidden'
+                        })
                 } else {
                     firebase
                         .firestore()
@@ -119,6 +175,9 @@
                                     createdAt: property.data().createdAt
                                 })
                             })
+                        })
+                        .then(() => {
+                                this.loading = 'is-hidden'
                         })
                 }
             }

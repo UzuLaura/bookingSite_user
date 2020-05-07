@@ -8,14 +8,14 @@
             <img src="./assets/logo.png">
           </router-link>
 
-          <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+          <a role="button"  class="navbar-burger burger" v-on:click="showNav = !showNav" :class="{ 'is-active': showNav }">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </a>
         </div>
         <!-- User -->
-        <div v-if="user" id="navbarBasicExample" class="navbar-menu">
+        <div v-if="user" :class="{ 'is-active': showNav }" class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
@@ -27,7 +27,7 @@
           </div>
         </div>
         <!-- Not User -->
-        <div v-else class="navbar-menu">
+        <div v-else class="navbar-menu" :class="{ 'is-active': showNav }">
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
@@ -61,7 +61,8 @@
       components: {Hero, Footer},
       data () {
           return {
-              user: ''
+              user: '',
+              showNav: false
           }
       },
       methods: {
