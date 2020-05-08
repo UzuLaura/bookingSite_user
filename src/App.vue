@@ -1,20 +1,17 @@
 <template>
   <div id="app">
-    <!-- NAVBAR -->
     <div id="navbar" class="container">
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <router-link class="brand" to="/">
             <img src="./assets/logo.png">
           </router-link>
-
           <a role="button"  class="navbar-burger burger" v-on:click="showNav = !showNav" :class="{ 'is-active': showNav }">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </a>
         </div>
-        <!-- User -->
         <div v-if="user" :class="{ 'is-active': showNav }" class="navbar-menu">
           <div class="navbar-end">
             <div class="navbar-item">
@@ -26,7 +23,6 @@
             </div>
           </div>
         </div>
-        <!-- Not User -->
         <div v-else class="navbar-menu" :class="{ 'is-active': showNav }">
           <div class="navbar-end">
             <div class="navbar-item">

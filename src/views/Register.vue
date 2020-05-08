@@ -28,7 +28,6 @@
                         <input class="input" v-model="user.email" type="email" placeholder="Email">
                     </div>
                 </div>
-
                 <div class="field">
                     <label class="label">Password</label>
                     <div class="control">

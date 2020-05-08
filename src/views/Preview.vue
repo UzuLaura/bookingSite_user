@@ -5,7 +5,6 @@
             <button class="button is-light has-text-info" v-on:click="$router.go(-1)">&lt; Back</button>
             <h2 class="title is-2 has-text-centered has-background-dark has-text-light padding">{{ property.name }}</h2>
             <hr>
-            <!--PROPERTY DESCRIPTION-->
             <div class="columns">
                 <div class="column is-6">
                     <img :src="property.image" :alt="property.name">
@@ -19,11 +18,9 @@
                     <p>{{ property.description }}</p>
                 </div>
             </div>
-            <!--BOOKING CALENDAR-->
             <h3 class="subtitle is-3 has-text-centered has-background-dark has-text-light padding">Pick date for your visit</h3>
             <div class="columns">
                 <div class="column is-6">
-                    <!--:min-date='new Date()'-->
                     <date-picker
                             mode="range"
                             :disabled-dates='property.unavailableDays'
@@ -59,7 +56,6 @@
                     <button class="button is-fullwidth is-success" v-on:click="proceedPayment">Pay</button>
                 </div>
             </div>
-            <!--CAROUSEL-->
             <div class="carousel-img level" v-bind:style="{ background: 'url(' + property.extraImages[imageIndex] + ')' }">
                 <span class="button carousel-btn is-light is-outlined level-left" v-on:click="carouselBack">&lt;</span>
                 <span class="button carousel-btn is-light is-outlined level-left" v-on:click="carouselForward">&gt;</span>
@@ -124,9 +120,7 @@
                 const oneDay = 24 * 60 * 60 * 1000;
                 const firstDate = new Date(this.date.start);
                 const secondDate = new Date(this.date.end);
-
                 this.totalDays = Math.round(Math.abs((firstDate - secondDate) / oneDay));
-
                 if (this.totalDays === 0) {
                     if (this.date.start) {
                         this.totalDays = 1
@@ -139,7 +133,6 @@
             convertBookingInfoDays () {
                 this.convertedDate.start = new Date(this.date.start)
                 this.convertedDate.start.setHours(this.convertedDate.start.getHours() + 3)
-
                 this.convertedDate.end = new Date(this.date.end)
                 this.convertedDate.end.setHours(this.convertedDate.end.getHours() + 3)
             },
@@ -195,7 +188,6 @@
                         this.property.extraImages = JSON.parse(property.data().extraImg)
                         this.property.price = property.data().price
                         this.property.city = property.data().city
-
                         if (property.data().unavailableDays) {
                             if (JSON.parse(property.data().unavailableDays).length >= 1) {
                                 JSON.parse(property.data().unavailableDays).forEach(day => {
@@ -205,7 +197,6 @@
                                 this.property.unavailableDays.push(JSON.parse(property.data().unavailableDays))
                             }
                         }
-
                         this.property.extraImages.push(this.property.image)
                     })
                     .then(() => {

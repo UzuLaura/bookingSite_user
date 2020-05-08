@@ -8,7 +8,6 @@
             <button class="button is-light has-text-info" v-on:click="$router.replace({name: 'Preview'})">&lt; Back</button>
             <form v-on:submit.prevent="completePayment">
                 <h2 class="title has-background-warning padding">Total Price: {{ this.bookingInfo.totalPrice }}$</h2>
-                <!--CARD TYPE AND NUMBER-->
                 <div class="columns">
                     <div class="column is-2">
                         <div class="field">
@@ -33,7 +32,6 @@
                         </div>
                     </div>
                 </div>
-                <!--CARD EXPIRE DATE-->
                 <div class="columns">
                     <div class="column is-8">
                         <label class="label">Expiration Date</label>
@@ -77,7 +75,6 @@
                         </div>
                     </div>
                 </div>
-                <!--CARDHOLDER-->
                 <div class="field">
                     <label class="label">Cardholder Name</label>
                     <div class="control">
@@ -138,7 +135,6 @@
                     this.cardInfo.month === 'Month' ||
                     this.cardInfo.year === 'Year' ||
                     !this.cardInfo.cvc) {
-
                     this.notification.color = 'is-danger'
                     this.notification.message = 'All fields are required!'
                     this.notification.hidden = ''
@@ -151,12 +147,10 @@
                     this.notification.hidden = ''
                     return false
                 }
-
                 return true
             },
             completePayment () {
                 this.validation()
-
                 if (this.validation() === true) {
                     this.unavailableDays.push(this.bookingInfo.bookedDays)
                     firebase
@@ -198,14 +192,12 @@
                             this.notification.hidden = ''
                         })
                 }
-
             }
         },
         beforeMount () {
             if (!localStorage.getItem('bookingInfo') || JSON.parse(localStorage.getItem('bookingInfo')).totalPrice === 0) {
                 this.$router.replace({name: 'Home'})
             }
-
             if (localStorage.getItem('user') === null) {
                 this.$router.replace({name: 'Login'})
             } else {

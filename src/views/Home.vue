@@ -3,7 +3,6 @@
     <Spinner v-bind:class="loading"/>
     <div class="container section">
         <div class="columns">
-            <!--SEARCH-->
             <div class="column is-2">
                 <div class="field-label is-normal">
                     <label class="label">Search by Name</label>
@@ -17,7 +16,6 @@
                     </span>
                 </div>
             </div>
-            <!--FILTER-->
             <div class="column is-3">
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
@@ -34,7 +32,6 @@
                 </div>
             </div>
         </div>
-        <!--CARD-->
         <div class="columns is-multiline">
             <div class="column is-12" v-bind:class="noResults"><h4 class="title has-text-centered">No Search Results Found</h4></div>
             <div class="card column is-4 hover" v-on:click="viewProperty(property.id)" v-for="property in properties" :key="property.title">
@@ -127,7 +124,6 @@
                             }
                         })
                     })
-
             },
             filter: function () {
                 this.loading = ''
